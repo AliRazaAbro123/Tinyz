@@ -1,0 +1,46 @@
+# Node.js dependencies
+back-end/node_modules/
+front-end/node_modules/
+
+# Build outputs
+front-end/.next/
+front-end/out/
+back-end/dist/
+back-end/build/
+
+# Environment variables
+back-end/.env
+front-end/.env
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor settings
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.swp
+
+# Local environment settings
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache
+front-end/.turbo/
+front-end/.vercel/
+back-end/.vercel/
+
+# Lock files (optional, only if you don’t want to commit)
+# package-lock.json
+# yarn.lock
