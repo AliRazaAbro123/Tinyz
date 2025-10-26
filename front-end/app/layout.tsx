@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import React, { Suspense } from "react";
-import "@fortawesome/fontawesome-svg-core/styles.css"; // ✅ Import Font Awesome CSS
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import Loading from "./loading";
 config.autoAddCss = false; // ✅ Prevent duplicate CSS
