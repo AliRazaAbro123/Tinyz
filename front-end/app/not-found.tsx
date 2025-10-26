@@ -23,7 +23,7 @@ export default function NotFound() {
 
         <Link
           href="/"
-          className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 font-semibold"
+          className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-800 transition duration-200 font-semibold"
         >
           Go Back Home
         </Link>
