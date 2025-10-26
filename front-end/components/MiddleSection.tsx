@@ -35,7 +35,6 @@ function MiddleSection() {
         }
       );
 
-      // ✅ Set short URL and message after successful response
       setshortUrl(response.data.shortUrl);
       setmsg(
         "Your short link is ready to go! Copy and share it wherever you're ready!"
