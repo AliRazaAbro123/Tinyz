@@ -7,7 +7,7 @@ function TopTitle() {
   return (
     <div className="w-full h-auto flex justify-center items-center">
       <div className="w-full h-auto flex justify-center items-center flex-col py-6 2xl:w-[96rem]">
-        {/* First section */}
+        {/* First Section */}
         <div className="w-[64%] max-xl:w-[80%] h-auto flex justify-center items-center flex-col max-md:w-full text-center">
           <h1 className="animatedText text-3xl font-bold flex items-center">
             <FontAwesomeIcon
@@ -24,7 +24,7 @@ function TopTitle() {
             your links look clean, smart, and professional.
           </p>
         </div>
-        {/* First section */}
+        {/* First Section */}
       </div>
     </div>
   );
