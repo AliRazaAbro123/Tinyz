@@ -15,7 +15,7 @@ import Loading from "@/app/loading";
 function BottomSection() {
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null); // ✅ Track which menu is open
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const toggleOptions = (index: number) => {
     // ✅ If the same card is clicked again, close it
