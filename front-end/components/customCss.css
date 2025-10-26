@@ -1,9 +1,8 @@
-/* Slow Typing + Reverse (Erasing) Animation for "Tinyz" */
 .typing {
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
-  border-right: 2px solid #2563eb; /* Blue cursor */
+  border-right: 2px solid #2563eb;
   font-weight: bold;
   letter-spacing: 1px;
   animation: typing 4s steps(5, end) 0s 1 normal forwards,
