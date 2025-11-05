@@ -8,7 +8,7 @@ function Footer() {
       role="contentinfo"
       aria-label="Website footer"
     >
-      <div className="w-full h-auto flex justify-center items-center flex-col py-4 2xl:w-[96rem] text-center space-y-1">
+      <div className="w-full h-auto flex justify-center items-center flex-col py-4 mt-4 2xl:w-[96rem] text-center space-y-1">
         <h2 className="font-semibold text-lg tracking-wide">
           Developed with ❤️ by{" "}
           <Link

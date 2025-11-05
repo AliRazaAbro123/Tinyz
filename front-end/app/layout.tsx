@@ -44,12 +44,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <Suspense fallback={<Loading />}>
-        <body className="bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 min-h-screen">
-          {children}
-        </body>
-      </Suspense>
-    </html>
+      <html lang="en">
+        <Suspense fallback={<Loading />}>
+          <body className="bg-gradient-to-r from-blue-100 via-purple-100 to-pink-100 min-h-screen">
+            {children}
+          </body>
+        </Suspense>
+      </html>
   );
 }

@@ -18,27 +18,55 @@ function MiddleSection() {
   const [validUrl, setvalidUrl] = useState("");
   const [shareBtns, setshareBtns] = useState("");
   const [urlBox, seturlBox] = useState("");
+  const [urlLoading, seturlLoading] = useState(false);
 
   async function CreateShortURL(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (url.length <= 7) {
-      setvalidUrl("Url must be at least 7 characters long");
+    // Improved validation and normalization
+    const raw = url.trim();
+    if (!raw) {
+      setvalidUrl("Please enter a URL.");
       setTimeout(() => setvalidUrl(""), 3000);
       return;
     }
 
-    try {
-      const response = await axios.post(
-        "https://tinyz-backend.vercel.app/api/shorten",
-        {
-          longUrl: url,
-        }
+    if (raw.length < 7) {
+      setvalidUrl(
+        "URL is too short — please provide a full domain (e.g. example.com)."
       );
+      setTimeout(() => setvalidUrl(""), 3000);
+      return;
+    }
 
+    // Ensure protocol for validation and request
+    let normalizedUrl = raw;
+    if (!/^https?:\/\//i.test(normalizedUrl)) {
+      normalizedUrl = `https://${normalizedUrl}`;
+    }
+
+    try {
+      // Validate format
+      // new URL() will throw if the URL is invalid
+      new URL(normalizedUrl);
+    } catch (err) {
+      setvalidUrl(
+        "Please enter a valid URL (include a domain, e.g. example.com, and optional http:// or https://)."
+      );
+      setTimeout(() => setvalidUrl(""), 3500);
+      return;
+    }
+
+    try {
+      seturlLoading(true);
+      const response = await axios.post("http://localhost:4001/api/shorten", {
+        longUrl: url,
+      });
+      seturlLoading(false);
       setshortUrl(response.data.shortUrl);
       setmsg(
         "Your short link is ready to go! Copy and share it wherever you're ready!"
       );
+
       const resetBtn = document.querySelector("#resetBtn");
       resetBtn?.classList.remove("hidden");
 
@@ -110,10 +138,10 @@ function MiddleSection() {
               />
               <button
                 type="submit"
-                className="bg-cyan-800 px-4 max-md:px-2 text-white text-base py-[7px] font-semibold absolute right-1 rounded-md"
+                className="valueBtn bg-cyan-800 px-4 max-md:px-2 text-white text-base py-[7px] font-semibold absolute right-1 rounded-md"
               >
                 <FontAwesomeIcon icon={faLink} size="1x" className="mr-1" />
-                Shorten
+                {urlLoading ? "Loading..." : "Shorten"}
               </button>
             </div>
             <p className="text-left text-red-700 font-semibold text-sm mt-[-8px]">

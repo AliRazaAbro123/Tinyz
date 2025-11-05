@@ -3,32 +3,27 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEllipsisV,
   faRotateForward,
-  faShareAlt,
   faTrash,
-  faClipboard,
+  faCopy,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Loading from "@/app/loading";
+import {
+  faFacebook,
+  faLinkedin,
+  faWhatsapp,
+} from "@fortawesome/free-brands-svg-icons";
 
 function BottomSection() {
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
-  const toggleOptions = (index: number) => {
-    // ✅ If the same card is clicked again, close it
-    setActiveIndex(activeIndex === index ? null : index);
-  };
 
   const fetchUrlsAgain = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.get(
-        "https://tinyz-backend.vercel.app/api/allUrls"
-      );
+      const response = await axios.get("http://localhost:4001/api/allUrls");
       setUrls(response.data);
     } catch (error) {
       console.error("Failed to fetch URLs:", error);
@@ -37,13 +32,36 @@ function BottomSection() {
     }
   };
 
+  async function deleteUrl(id: any) {
+    try {
+      const res = await axios.delete(
+        `http://localhost:4001/api/deleteUrl/${id}`
+      );
+
+      if (res.status === 200) {
+        // ✅ After successful delete, fetch all URLs again
+        setLoading(true);
+        try {
+          const response = await axios.get("http://localhost:4001/api/allUrls");
+          setUrls(response.data);
+        } catch (error) {
+          console.error("Failed to fetch URLs:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        console.error("Failed to delete URLs:", res.status);
+      }
+    } catch (error) {
+      console.error("Error deleting URLs:", error);
+    }
+  }
+
   useEffect(() => {
     const fetchAllUrls = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          "https://tinyz-backend.vercel.app/api/allUrls"
-        );
+        const response = await axios.get("http://localhost:4001/api/allUrls");
         setUrls(response.data);
       } catch (error) {
         console.error("Failed to fetch URLs:", error);
@@ -75,7 +93,7 @@ function BottomSection() {
             <h1 className="font-semibold text-lg">Recently Shortened URLS</h1>
 
             <Link
-              href="https://tinyz-backend.vercel.app/api/deleteAllUrl"
+              href={"http://localhost:4001/api/deleteAllUrl"}
               className="bg-red-200 hover:bg-red-300 py-1 px-2 rounded-md duration-100 text-red-700 flex justify-center items-center flex-row gap-1 font-semibold text-base shadow-sm shadow-red-700"
             >
               <FontAwesomeIcon icon={faTrash} /> Clear All
@@ -96,66 +114,83 @@ function BottomSection() {
                 </h1>
 
                 <p className="text-gray-700 text-sm break-all">
-                  {url.originalUrl}
+                  {url.originalUrl.length > 60
+                    ? `${url.originalUrl.slice(0, 60)}...`
+                    : url.originalUrl}
                 </p>
+                <h3 className="absolute bottom-2 right-4 font-semibold text-sm">
+                  Views : {url.clicks.length}
+                </h3>
 
                 <h1 className="text-gray-700 text-[12px] font-semibold mt-2">
                   {new Date(url.createdAt).toLocaleString()}
                 </h1>
 
-                {/* Options Icon */}
-                <div
-                  onClick={() => toggleOptions(index)} // ✅ Pass index
-                  className="absolute top-1 right-2 flex justify-center items-center gap-2"
-                >
-                  <FontAwesomeIcon
-                    icon={faEllipsisV}
-                    size="1x"
-                    color="blue"
-                    className="ml-3 p-2 rounded-full hover:cursor-pointer hover:bg-slate-400 duration-150"
-                  />
+                <div className="absolute top-2 right-3 flex justify-center items-center flex-row gap-3 text-sm">
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                      url.shortUrl
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FontAwesomeIcon icon={faFacebook} color="blue" size="lg" />
+                  </a>
+                  <Link
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                      url.shortUrl
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FontAwesomeIcon
+                      icon={faWhatsapp}
+                      color="green"
+                      size="lg"
+                    />
+                  </Link>
+                  <a
+                    href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                      url.shortUrl
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <FontAwesomeIcon
+                      icon={faLinkedin}
+                      size="lg"
+                      className="text-blue-600"
+                    />
+                  </a>
+
+                  <button
+                    onClick={async (e: React.MouseEvent<HTMLButtonElement>) => {
+                      e.preventDefault();
+                      try {
+                        await navigator.clipboard.writeText(
+                          `http://localhost:4001/${url.shortUrl}`
+                        );
+                      } catch (error) {
+                        console.error("Failed to copy:", error);
+                      }
+                    }}
+                    className=""
+                  >
+                    <FontAwesomeIcon
+                      icon={faCopy}
+                      color="blue"
+                      className="text-base"
+                    />
+                  </button>
+
+                  <button onClick={() => deleteUrl(url._id)}>
+                    <FontAwesomeIcon
+                      icon={faTrash}
+                      color="red"
+                      className="text-base"
+                    />
+                  </button>
                 </div>
-
-                {/* ✅ Show this menu only for active card */}
-                {activeIndex === index && (
-                  <div className="absolute top-[-6.8rem] z-50 right-2 bg-white shadow-md shadow-gray-400 rounded-md px-3 py-2 flex-col gap-1 text-sm">
-                    <Link
-                      href="#"
-                      className="py-1 px-3 rounded-md hover:bg-slate-400 duration-150 font-semibold flex items-center"
-                    >
-                      Share
-                      <FontAwesomeIcon
-                        icon={faShareAlt}
-                        size="1x"
-                        color="red"
-                        className="ml-2"
-                      />
-                    </Link>
-
-                    <button className="py-1 px-3 rounded-md hover:bg-slate-400 duration-150 font-semibold flex items-center">
-                      Copy
-                      <FontAwesomeIcon
-                        icon={faClipboard}
-                        size="1x"
-                        color="blue"
-                        className="ml-3"
-                      />
-                    </button>
-
-                    <Link
-                      href={`https://tinyz-backend.vercel.app/api/deleteUrl/${url._id}`}
-                      className="py-1 px-3 rounded-md hover:bg-slate-400 duration-150 font-semibold flex items-center"
-                    >
-                      Delete
-                      <FontAwesomeIcon
-                        icon={faTrash}
-                        size="1x"
-                        color="red"
-                        className="ml-1"
-                      />
-                    </Link>
-                  </div>
-                )}
               </div>
             ))
           ) : (

@@ -6,13 +6,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 3,
     maxlength: 30,
-    match: /^[a-zA-Z0-9_]+$/, // ✅ use 'match' instead of 'enum'
   },
   email: {
     type: String,
     required: true,
     unique: true,
-    match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, // ✅ valid email regex
   },
   password: {
     type: String, // ✅ must be 'String' (not 'string')

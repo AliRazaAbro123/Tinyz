@@ -3,6 +3,9 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const indexRoutes = require("./routes/index");
 const DatabaseConnection = require("./config/DatabaseConnection");
+const UrlModel = require("./models/Url");
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
 
 // ✅ Load environment variables
 dotenv.config();
@@ -40,6 +43,14 @@ app.use(
 // ✅ Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: true,
+    secret: process.env.EXPRESS_SESSION_SECRRET_KEY,
+  })
+);
 
 // ✅ Test route
 app.get("/", (req, res) => {
@@ -48,6 +59,23 @@ app.get("/", (req, res) => {
 
 // ✅ API routes
 app.use("/api", indexRoutes);
+
+app.get("/:url", async (req, res) => {
+  const shortUrl = req.params.url;
+  const url = await UrlModel.findOneAndUpdate(
+    {
+      shortUrl,
+    },
+    {
+      $push: {
+        clicks: {
+          timeStamp: Date.now(),
+        },
+      },
+    }
+  );
+  res.redirect(url.originalUrl);
+});
 
 // ✅ Start server
 app.listen(PORT, () => {
