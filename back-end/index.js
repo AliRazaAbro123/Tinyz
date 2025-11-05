@@ -60,22 +60,54 @@ app.get("/", (req, res) => {
 // ✅ API routes
 app.use("/api", indexRoutes);
 
-app.get("/:url", async (req, res) => {
-  const shortUrl = req.params.url;
-  const url = await UrlModel.findOneAndUpdate(
-    {
-      shortUrl,
-    },
-    {
+// ...existing code...
+// register API routes
+app.use("/api", indexRoutes);
+
+// Improved short-url redirect (replace the old app.get("/:url") handler)
+app.get("/:shortId", async (req, res) => {
+  const shortId = req.params.shortId;
+
+  // avoid reserving special paths (adjust as needed)
+  const reserved = ["api", "_next", "favicon.ico", "static"];
+  if (reserved.includes(shortId)) return res.status(404).send("Not found");
+
+  try {
+    const update = {
       $push: {
         clicks: {
-          timeStamp: Date.now(),
+          timeStamp: new Date(),
+          ip: req.ip,
+          userAgent: req.get("user-agent"),
         },
       },
+      $inc: { clicksCount: 1 }, // optional: add clicksCount to your schema if desired
+    };
+
+    const url = await UrlModel.findOneAndUpdate(
+      { shortUrl: shortId },
+      update,
+      { new: true } // return the updated document
+    );
+
+    if (!url) {
+      return res.status(404).send("Short URL not found");
     }
-  );
-  res.redirect(url.originalUrl);
+
+    let target = url.originalUrl || "";
+    // ensure protocol is present
+    if (!/^https?:\/\//i.test(target)) {
+      target = `https://${target}`;
+    }
+
+    // Use a 302 temporary redirect (change to 301 if permanent)
+    return res.redirect(302, target);
+  } catch (err) {
+    console.error("Redirect error:", err);
+    return res.status(500).send("Server error");
+  }
 });
+// ...existing code...
 
 // ✅ Start server
 app.listen(PORT, () => {

@@ -23,7 +23,6 @@ yarn-error.log*
 Thumbs.db
 
 # IDE / Editor settings
-.vscode/
 .idea/
 
 # Temporary files
@@ -31,7 +30,6 @@ Thumbs.db
 *.swp
 
 # Local environment settings
-.env.local
 .env.development.local
 .env.test.local
 .env.production.local
@@ -44,3 +42,5 @@ back-end/.vercel/
 # Lock files (optional, only if you don’t want to commit)
 # package-lock.json
 # yarn.lock
+config.bat
+node_modules

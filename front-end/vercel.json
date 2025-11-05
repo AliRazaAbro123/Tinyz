@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/:shortId",
+      "destination": "https://tinyz-backend.vercel.app/:shortId"
+    }
+  ]
+}
